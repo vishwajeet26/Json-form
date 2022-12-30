@@ -21,6 +21,7 @@ const Input: FunctionComponent<InputProps> = (props: InputProps) => {
     disabled,
     error,
     showErrorText = true,
+    touched,
   } = props;
   if (type === 'password') return <PasswordInput {...props} />;
   return (
@@ -53,7 +54,7 @@ const Input: FunctionComponent<InputProps> = (props: InputProps) => {
               'mt-2': !!label,
               'text-gray-500 bg-gray-100 px-2': !!disabled,
               'border border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:ring-red':
-                !!error,
+                !!error && touched,
             },
             className
           )}
@@ -65,7 +66,7 @@ const Input: FunctionComponent<InputProps> = (props: InputProps) => {
         )}
       </div>
       <InputHelper type='helper' text={error ? undefined : helperText} />
-      {showErrorText && <InputHelper type='error' text={error} />}
+      {touched && showErrorText && <InputHelper type='error' text={error} />}
     </>
   );
 };

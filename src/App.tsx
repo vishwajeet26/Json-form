@@ -6,7 +6,7 @@ import { mockData } from 'models/jsonFormModel';
 import JsonForm from 'components/JsonForm';
 
 const App: React.FC = () => (
-  <div className='flex justify-center items-center  h-full'>
+  <div className='flex justify-center items-center h-full'>
     <JsonForm formData={mockData} />
   </div>
 );

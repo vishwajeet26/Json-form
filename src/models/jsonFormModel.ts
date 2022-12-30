@@ -1,9 +1,20 @@
+import * as Yup from 'yup';
+
 export interface BasicFieldTypes {
   name: string;
   label: string;
-  type: string;
+  type:
+    | 'number'
+    | 'time'
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'date'
+    | 'file'
+    | undefined;
   isRequired?: boolean;
   placeholder?: string;
+  validation?: Yup.SchemaOf<any>;
 }
 
 interface FieldTypes extends BasicFieldTypes {
@@ -24,12 +35,14 @@ export const mockData: FormType = {
       type: 'text',
       isRequired: true,
       placeholder: 'First Name',
+      validation: Yup.string()
+        .required('First name is required')
+        .min(2, 'First name must be at least 2 characters long'),
       children: [
         {
           name: 'lastName',
           label: 'Last Name',
           type: 'text',
-          isRequired: false,
           placeholder: 'Last Name',
         },
       ],
@@ -40,6 +53,9 @@ export const mockData: FormType = {
       type: 'email',
       isRequired: true,
       placeholder: 'Email',
+      validation: Yup.string()
+        .email('Invalid email')
+        .required('Email is required'),
     },
     {
       name: 'number',
@@ -47,6 +63,7 @@ export const mockData: FormType = {
       type: 'number',
       isRequired: true,
       placeholder: 'Enter Your Mobile Number',
+      validation: Yup.number().required('Mobile number is required'),
     },
   ],
 };

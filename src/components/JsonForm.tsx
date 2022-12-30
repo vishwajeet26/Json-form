@@ -2,8 +2,7 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import { FormType } from 'models/jsonFormModel';
 import * as Yup from 'yup';
-import CustomField from './CustomField';
-import ErrorMessage from './ErrorMessage';
+import FormikInput from 'shared-resources/components/Input/FormikInput';
 
 interface JsonFormProps {
   formData: FormType;
@@ -12,10 +11,10 @@ const JsonForm: React.FC<JsonFormProps> = (props) => {
   const { formData } = props;
   const initialValues = formData.fields.reduce(
     (acc: Record<string, string | boolean>, field) => {
-      acc[field.name] = field.type === 'checkbox' ? false : '';
+      acc[field.name] = '';
       if (field.children) {
         field.children.forEach((child) => {
-          acc[child.name] = child.type === 'checkbox' ? false : '';
+          acc[child.name] = '';
         });
       }
       return acc;
@@ -25,14 +24,15 @@ const JsonForm: React.FC<JsonFormProps> = (props) => {
 
   const validationSchema = Yup.object().shape(
     formData.fields.reduce((acc: any, field) => {
-      acc[field.name] = field.isRequired
-        ? Yup.string().required(`${field.label} is required`)
-        : Yup.string();
+      if (field.isRequired && field.validation) {
+        acc[field.name] = field.validation;
+      }
+
       if (field.children) {
         field.children.forEach((child) => {
-          acc[child.name] = child.isRequired
-            ? Yup.string().required(`${child.label} is required`)
-            : Yup.string();
+          if (field.isRequired && field.validation) {
+            acc[child.name] = field.validation;
+          }
         });
       }
       return acc;
@@ -43,11 +43,12 @@ const JsonForm: React.FC<JsonFormProps> = (props) => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
+      onSubmit={(values, { resetForm }) => {
         console.log(values);
+        resetForm();
       }}
     >
-      {({ errors, touched, setValues }) => (
+      {({ errors, touched, resetForm }) => (
         <Form>
           {formData.formName ? (
             <h1 className='text-lg font-bold text-blue-700'>
@@ -56,22 +57,26 @@ const JsonForm: React.FC<JsonFormProps> = (props) => {
           ) : null}
           {formData.fields.map((field) => (
             <div key={field.name} className='flex'>
-              <div>
-                <CustomField data={field} />
-                <ErrorMessage
+              <div className='mt-5 w-full'>
+                <FormikInput
                   name={field.name}
-                  errors={errors}
-                  touched={touched}
+                  error={errors[field.name]}
+                  label={field.label}
+                  placeholder={field.placeholder}
+                  type={field.type}
+                  touched={touched[field.name]}
                 />
               </div>
               {field.children
                 ? field.children.map((child) => (
-                    <div key={child.name} className='mx-2'>
-                      <CustomField data={child} />
-                      <ErrorMessage
+                    <div key={child.name} className='mx-2 mt-5'>
+                      <FormikInput
                         name={child.name}
-                        errors={errors}
-                        touched={touched}
+                        error={errors[child.name]}
+                        label={child.label}
+                        placeholder={child.placeholder}
+                        type={child.type}
+                        touched={touched[child.name]}
                       />
                     </div>
                   ))
@@ -81,7 +86,7 @@ const JsonForm: React.FC<JsonFormProps> = (props) => {
           <div className='mt-4 space-x-2 w-full flex justify-center items-center'>
             <button
               className='bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow'
-              onClick={() => setValues(initialValues)}
+              onClick={() => resetForm()}
             >
               Cancel
             </button>

@@ -15,4 +15,5 @@ export interface InputProps {
   disabled?: boolean;
   error?: string;
   showErrorText?: boolean;
+  touched?: boolean;
 }
