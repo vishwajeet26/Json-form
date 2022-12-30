@@ -30,8 +30,8 @@ const JsonForm: React.FC<JsonFormProps> = (props) => {
 
       if (field.children) {
         field.children.forEach((child) => {
-          if (field.isRequired && field.validation) {
-            acc[child.name] = field.validation;
+          if (child.isRequired && child.validation) {
+            acc[child.name] = child.validation;
           }
         });
       }

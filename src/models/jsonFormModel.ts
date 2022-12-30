@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import 'yup-phone';
 
 export interface BasicFieldTypes {
   name: string;
@@ -63,7 +64,9 @@ export const mockData: FormType = {
       type: 'number',
       isRequired: true,
       placeholder: 'Enter Your Mobile Number',
-      validation: Yup.number().required('Mobile number is required'),
+      validation: Yup.string()
+        .phone('IN', true, 'Enter a correct mobile number')
+        .required('Mobile number is required'),
     },
   ],
 };
