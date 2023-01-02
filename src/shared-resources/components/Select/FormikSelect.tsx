@@ -3,7 +3,7 @@ import React from 'react';
 import InputHelper from '../Inputhelper/InputHelper';
 import Select, { SelectProps } from './Select';
 
-interface FormikSelectProps extends Omit<SelectProps, 'onChange'> {
+export interface FormikSelectProps extends Omit<SelectProps, 'onChange'> {
   name: string;
 }
 
@@ -11,7 +11,7 @@ const FormikSelectMenu: React.FC<FormikSelectProps> = (props) => {
   const { name } = props;
   const [, meta, helpers] = useField(name);
 
-  const { value, error } = meta;
+  const { value, error, touched } = meta;
   const { setValue } = helpers;
 
   return (
@@ -21,7 +21,7 @@ const FormikSelectMenu: React.FC<FormikSelectProps> = (props) => {
         onChange={(_value): void => setValue(_value)}
         {...props}
       />
-      {error && <InputHelper type='error' text={error} />}
+      {touched && error && <InputHelper type='error' text={error} />}
     </>
   );
 };

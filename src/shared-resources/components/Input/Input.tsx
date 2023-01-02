@@ -20,8 +20,8 @@ const Input: FunctionComponent<InputProps> = (props: InputProps) => {
     style,
     disabled,
     error,
-    showErrorText = true,
     touched,
+    showErrorText = true,
   } = props;
   if (type === 'password') return <PasswordInput {...props} />;
   return (

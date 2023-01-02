@@ -1,39 +1,31 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
-import { FormType } from 'models/jsonFormModel';
+import { FormField } from 'models/jsonFormModel';
 import * as Yup from 'yup';
-import FormikInput from 'shared-resources/components/Input/FormikInput';
+import FormikInput, {
+  FormikInputProps,
+} from 'shared-resources/components/Input/FormikInput';
+import FormikSelectMenu, {
+  FormikSelectProps,
+} from 'shared-resources/components/Select/FormikSelect';
 
 interface JsonFormProps {
-  formData: FormType;
+  formData: FormField<string | number, FormikSelectProps | FormikInputProps>[];
 }
 const JsonForm: React.FC<JsonFormProps> = (props) => {
   const { formData } = props;
-  const initialValues = formData.fields.reduce(
+  const initialValues = formData.reduce(
     (acc: Record<string, string | boolean>, field) => {
       acc[field.name] = '';
-      if (field.children) {
-        field.children.forEach((child) => {
-          acc[child.name] = '';
-        });
-      }
       return acc;
     },
     {}
   );
 
   const validationSchema = Yup.object().shape(
-    formData.fields.reduce((acc: any, field) => {
-      if (field.isRequired && field.validation) {
+    formData.reduce((acc: any, field) => {
+      if (field.validation) {
         acc[field.name] = field.validation;
-      }
-
-      if (field.children) {
-        field.children.forEach((child) => {
-          if (child.isRequired && child.validation) {
-            acc[child.name] = child.validation;
-          }
-        });
       }
       return acc;
     }, {})
@@ -48,39 +40,20 @@ const JsonForm: React.FC<JsonFormProps> = (props) => {
         resetForm();
       }}
     >
-      {({ errors, touched, resetForm }) => (
+      {({ resetForm }) => (
         <Form>
-          {formData.formName ? (
-            <h1 className='text-lg font-bold text-blue-700'>
-              {formData.formName}
-            </h1>
-          ) : null}
-          {formData.fields.map((field) => (
+          {formData.map((field) => (
             <div key={field.name} className='flex'>
               <div className='mt-5 w-full'>
-                <FormikInput
-                  name={field.name}
-                  error={errors[field.name]}
-                  label={field.label}
-                  placeholder={field.placeholder}
-                  type={field.type}
-                  touched={touched[field.name]}
-                />
+                {field.type === 'select' ? (
+                  <FormikSelectMenu
+                    {...(field.componentProps as FormikSelectProps)}
+                    name={field.name}
+                  />
+                ) : (
+                  <FormikInput {...field.componentProps} name={field.name} />
+                )}
               </div>
-              {field.children
-                ? field.children.map((child) => (
-                    <div key={child.name} className='mx-2 mt-5'>
-                      <FormikInput
-                        name={child.name}
-                        error={errors[child.name]}
-                        label={child.label}
-                        placeholder={child.placeholder}
-                        type={child.type}
-                        touched={touched[child.name]}
-                      />
-                    </div>
-                  ))
-                : null}
             </div>
           ))}
           <div className='mt-4 space-x-2 w-full flex justify-center items-center'>

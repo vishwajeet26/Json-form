@@ -63,26 +63,24 @@ const Select: React.FC<SelectProps> = (props: SelectProps) => {
   };
 
   return (
-    <div className='fixed w-[50%] top-16'>
-      <ReactSelect
-        value={currentValue}
-        isMulti={isMulti}
-        onChange={handleChange}
-        options={items}
-        isDisabled={isDisabled}
-        placeholder={placeholder}
-        autoFocus={autoFocus}
-        hideSelectedOptions={false}
-        isSearchable={isSearchable}
-        isLoading={isLoading}
-        components={{
-          Option: SelectItem,
-          Control: SelectControl,
-          MultiValueContainer: SelectMultiContainer,
-        }}
-        isClearable={isClearable}
-      />
-    </div>
+    <ReactSelect
+      value={currentValue}
+      isMulti={isMulti}
+      onChange={handleChange}
+      options={items}
+      isDisabled={isDisabled}
+      placeholder={placeholder}
+      autoFocus={autoFocus}
+      hideSelectedOptions={false}
+      isSearchable={isSearchable}
+      isLoading={isLoading}
+      components={{
+        Option: SelectItem,
+        Control: SelectControl,
+        MultiValueContainer: SelectMultiContainer,
+      }}
+      isClearable={isClearable}
+    />
   );
 };
 
